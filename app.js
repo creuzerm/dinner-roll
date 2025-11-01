@@ -29,6 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const individualRollBtns = document.querySelectorAll('.roll-btn');
     const inStockToggle = document.getElementById('in-stock-toggle');
 
+    function loadSettings() {
+        const savedFilterInStock = localStorage.getItem('filterInStock');
+        if (savedFilterInStock !== null) {
+            filterInStock = savedFilterInStock === 'true';
+            inStockToggle.checked = filterInStock;
+        }
+    }
+
     function getRandomElement(arr) {
         if (!arr || arr.length === 0) return "N/A";
 
@@ -131,6 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inStockToggle.addEventListener('change', () => {
         filterInStock = inStockToggle.checked;
+        localStorage.setItem('filterInStock', filterInStock);
     });
 
+    loadSettings();
 });
