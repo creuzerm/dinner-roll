@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let mealData = getMealData();
     const settingsContainer = document.getElementById('settings-container');
     const saveBtn = document.getElementById('save-settings-btn');
+    const addItemBtn = document.getElementById('add-item-btn');
+    const newItemNameInput = document.getElementById('new-item-name');
+    const newItemWeightInput = document.getElementById('new-item-weight');
+    const newItemCategorySelect = document.getElementById('new-item-category');
 
     function renderSettings() {
         settingsContainer.innerHTML = '';
@@ -36,6 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function createSettingRow(category, index, item, subCategory = null) {
         const row = document.createElement('div');
         row.className = 'flex items-center justify-between p-2 rounded-lg';
+        row.dataset.itemRow = 'true';
+        row.dataset.category = category;
+        row.dataset.index = index;
+        if (subCategory) {
+            row.dataset.subCategory = subCategory;
+        }
 
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
@@ -79,21 +89,43 @@ document.addEventListener('DOMContentLoaded', () => {
         return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
     }
 
-    function saveSettings() {
-        const nameInputs = document.querySelectorAll('input[type="text"]');
-        const weightInputs = document.querySelectorAll('input[type="number"]');
-        const inStockCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-
-        nameInputs.forEach((input, i) => {
-            const { category, index, subCategory } = input.dataset;
-            if (subCategory) {
-                mealData[category][subCategory][index].name = input.value;
-                mealData[category][subCategory][index].weight = parseInt(weightInputs[i].value, 10);
-                mealData[category][subCategory][index].inStock = inStockCheckboxes[i].checked;
+    function populateCategorySelect() {
+        for (const category in mealData) {
+            if (Array.isArray(mealData[category])) {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = formatCategoryName(category);
+                newItemCategorySelect.appendChild(option);
             } else {
-                mealData[category][index].name = input.value;
-                mealData[category][index].weight = parseInt(weightInputs[i].value, 10);
-                mealData[category][index].inStock = inStockCheckboxes[i].checked;
+                for (const subCategory in mealData[category]) {
+                    const option = document.createElement('option');
+                    option.value = `${category}.${subCategory}`;
+                    option.textContent = `${formatCategoryName(category)} - ${subCategory}`;
+                    newItemCategorySelect.appendChild(option);
+                }
+            }
+        }
+    }
+
+    function saveSettings() {
+        const itemRows = document.querySelectorAll('[data-item-row]');
+
+        itemRows.forEach(row => {
+            const { category, index, subCategory } = row.dataset;
+            const nameInput = row.querySelector('input[type="text"]');
+            const weightInput = row.querySelector('input[type="number"]');
+            const inStockCheckbox = row.querySelector('input[type="checkbox"]');
+
+            const updatedItem = {
+                name: nameInput.value,
+                weight: parseInt(weightInput.value, 10),
+                inStock: inStockCheckbox.checked
+            };
+
+            if (subCategory) {
+                mealData[category][subCategory][index] = updatedItem;
+            } else {
+                mealData[category][index] = updatedItem;
             }
         });
 
@@ -101,7 +133,39 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Settings saved!');
     }
 
-    saveBtn.addEventListener('click', saveSettings);
+    function addNewItem() {
+        const name = newItemNameInput.value.trim();
+        if (!name) {
+            alert('Please enter a name for the new item.');
+            return;
+        }
 
+        const weight = parseInt(newItemWeightInput.value, 10);
+        const categoryPath = newItemCategorySelect.value.split('.');
+        const category = categoryPath[0];
+        const subCategory = categoryPath.length > 1 ? categoryPath[1] : null;
+
+        const newItem = {
+            name,
+            weight,
+            inStock: true
+        };
+
+        if (subCategory) {
+            mealData[category][subCategory].push(newItem);
+        } else {
+            mealData[category].push(newItem);
+        }
+
+        saveMealData(mealData);
+        renderSettings();
+        newItemNameInput.value = '';
+        newItemWeightInput.value = '10';
+    }
+
+    saveBtn.addEventListener('click', saveSettings);
+    addItemBtn.addEventListener('click', addNewItem);
+
+    populateCategorySelect();
     renderSettings();
 });
