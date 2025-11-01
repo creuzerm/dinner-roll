@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chosen Palette: Warm Neutrals (Stone) with Earthy Red/Green Accents -->
     <!-- Application Structure Plan: A single-page, step-by-step meal generator. The structure guides the user through four "rolls" (Protein, Cut, Fat, Finisher) presented as interactive cards in a grid. This is a task-oriented flow, chosen to mimic the 'Roll for Dinner' game mechanic and simplify decision-making for the user. A main 'Roll All' button provides immediate results, while individual roll buttons allow for fine-tuning. A final summary card clearly presents the generated meal. This structure directly serves the user's goal of creating a random, compliant carnivore meal. -->
-    <!-- Visualization & Content Choices: Report Info: Carnivore meal options (no pork). Goal: Randomly select one option for each meal category. Viz/Presentation: Interactive 'Card' (HTML/Tailwind) for each category (Protein, Cut, Fat, Finisher). Interaction: JS-powered 'Roll' button on each card updates its content. A master 'Roll All' button triggers all cards. Justification: This card-based UI is highly interactive, intuitive, and visually represents the 'rolling' or selection process for each component of the meal, making the app engaging and easy to use. Library/Method: Vanilla JS for DOM manipulation and randomization logic. -->
+    <!-- Visualization & Content Choices: Report Info: Carnivore meal options. Goal: Randomly select one option for each meal category. Viz/Presentation: Interactive 'Card' (HTML/Tailwind) for each category (Protein, Cut, Fat, Finisher). Interaction: JS-powered 'Roll' button on each card updates its content. A master 'Roll All' button triggers all cards. Justification: This card-based UI is highly interactive, intuitive, and visually represents the 'rolling' or selection process for each component of the meal, making the app engaging and easy to use. Library/Method: Vanilla JS for DOM manipulation and randomization logic. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -25,7 +25,7 @@
 
     <div class="w-full max-w-6xl mx-auto text-center">
         <h1 class="text-4xl md:text-5xl font-bold text-stone-900 mb-2">Roll for Carnivore Dinner</h1>
-        <p class="text-lg text-stone-700 mb-8 max-w-2xl mx-auto">Can't decide what to eat on your carnivore journey? Let the dice decide for you! (Pork-free)</p>
+        <p class="text-lg text-stone-700 mb-8 max-w-2xl mx-auto">Can't decide what to eat on your carnivore journey? Let the dice decide for you!</p>
 
         <button id="roll-all-btn" class="bg-green-700 text-white text-xl md:text-2xl font-bold py-3 px-8 rounded-xl shadow-xl hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-400 transition-all duration-200 mb-8">
             🎲 Roll For Your Meal! 🎲
