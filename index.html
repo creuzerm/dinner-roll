@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roll for Carnivore Dinner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals (Stone) with Earthy Red/Green Accents -->
+    <!-- Application Structure Plan: A single-page, step-by-step meal generator. The structure guides the user through four "rolls" (Protein, Cut, Fat, Finisher) presented as interactive cards in a grid. This is a task-oriented flow, chosen to mimic the 'Roll for Dinner' game mechanic and simplify decision-making for the user. A main 'Roll All' button provides immediate results, while individual roll buttons allow for fine-tuning. A final summary card clearly presents the generated meal. This structure directly serves the user's goal of creating a random, compliant carnivore meal. -->
+    <!-- Visualization & Content Choices: Report Info: Carnivore meal options (no pork). Goal: Randomly select one option for each meal category. Viz/Presentation: Interactive 'Card' (HTML/Tailwind) for each category (Protein, Cut, Fat, Finisher). Interaction: JS-powered 'Roll' button on each card updates its content. A master 'Roll All' button triggers all cards. Justification: This card-based UI is highly interactive, intuitive, and visually represents the 'rolling' or selection process for each component of the meal, making the app engaging and easy to use. Library/Method: Vanilla JS for DOM manipulation and randomization logic. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .dice-placeholder {
+            font-size: 3rem;
+            line-height: 1;
+            color: #d1d5db; 
+        }
+    </style>
+</head>
+<body class="bg-stone-100 min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 text-stone-900">
+
+    <div class="w-full max-w-6xl mx-auto text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-stone-900 mb-2">Roll for Carnivore Dinner</h1>
+        <p class="text-lg text-stone-700 mb-8 max-w-2xl mx-auto">Can't decide what to eat on your carnivore journey? Let the dice decide for you! (Pork-free)</p>
+
+        <button id="roll-all-btn" class="bg-green-700 text-white text-xl md:text-2xl font-bold py-3 px-8 rounded-xl shadow-xl hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-400 transition-all duration-200 mb-8">
+            🎲 Roll For Your Meal! 🎲
+        </button>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            
+            <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between transition-all duration-300">
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-800 mb-4 text-center">1. Main Protein</h2>
+                    <div id="mainProtein-result" class="text-2xl font-bold text-red-800 h-24 flex items-center justify-center text-center p-2">
+                        <span class="dice-placeholder">🥩</span>
+                    </div>
+                </div>
+                <button data-category="mainProtein" class="roll-btn w-full bg-red-800 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-colors mt-4">Roll</button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between transition-all duration-300">
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-800 mb-4 text-center">2. Protein Cut / Type</h2>
+                    <div id="cuts-result" class="text-2xl font-bold text-red-800 h-24 flex items-center justify-center text-center p-2">
+                         <span class="dice-placeholder">🔪</span>
+                    </div>
+                </div>
+                <button data-category="cuts" class="roll-btn w-full bg-red-800 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-colors mt-4">Roll</button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between transition-all duration-300">
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-800 mb-4 text-center">3. Fat Source</h2>
+                    <div id="fatSource-result" class="text-2xl font-bold text-red-800 h-24 flex items-center justify-center text-center p-2">
+                         <span class="dice-placeholder">🧈</span>
+                    </div>
+                </div>
+                <button data-category="fatSource" class="roll-btn w-full bg-red-800 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-colors mt-4">Roll</button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between transition-all duration-300">
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-800 mb-4 text-center">4. Flavor Finisher</h2>
+                    <div id="finisher-result" class="text-2xl font-bold text-red-800 h-24 flex items-center justify-center text-center p-2">
+                         <span class="dice-placeholder">🍳</span>
+                    </div>
+                </div>
+                <button data-category="finisher" class="roll-btn w-full bg-red-800 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-colors mt-4">Roll</button>
+            </div>
+        </div>
+
+        <div class="w-full bg-white rounded-xl shadow-2xl p-6 md:p-8">
+            <h2 class="text-2xl md:text-3xl font-bold mb-4 text-center">Your Carnivore Meal:</h2>
+            <div id="summary-result" class="text-xl md:text-2xl text-stone-800 text-center min-h-[3rem] flex items-center justify-center">
+                <p class="text-stone-500">Roll the dice to see your meal!</p>
+            </div>
+            <button id="reset-btn" class="block mx-auto mt-6 bg-stone-500 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-stone-600 focus:outline-none focus:ring-4 focus:ring-stone-300 transition-colors">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mealData = {
+                mainProtein: ["Beef", "Lamb", "Chicken", "Turkey", "Duck", "Fish", "Seafood"],
+                cuts: {
+                    Beef: ["Ribeye Steak", "New York Strip", "Sirloin Steak", "Ground Beef (Patties)", "Chuck Roast", "Brisket", "Short Ribs", "Beef Liver"],
+                    Lamb: ["Lamb Chops", "Leg of Lamb", "Ground Lamb", "Lamb Shank", "Lamb Liver"],
+                    Chicken: ["Chicken Thighs (Skin-on)", "Chicken Wings", "Whole Roasted Chicken", "Chicken Breast", "Chicken Liver"],
+                    Turkey: ["Turkey Legs", "Ground Turkey", "Turkey Breast (Skin-on)"],
+                    Duck: ["Duck Breast (Skin-on)", "Duck Legs (Confit)", "Whole Roasted Duck"],
+                    Fish: ["Salmon Fillet (Skin-on)", "Sardines (in water/oil)", "Mackerel", "Cod", "Tuna Steak", "Halibut"],
+                    Seafood: ["Shrimp", "Scallops", "Mussels", "Crab Legs", "Oysters"]
+                },
+                fatSource: ["Beef Tallow", "Salted Butter", "Ghee", "Duck Fat", "Schmaltz (Chicken Fat)", "Egg Yolks"],
+                finisher: ["Just Salt", "Fried Egg(s)", "Melted Butter", "Crumbled Hard Cheese", "Beef Bacon Bits", "A Dollop of Sour Cream", "Bone Broth (on the side)"]
+            };
+
+            let currentMeal = {
+                mainProtein: null,
+                cuts: null,
+                fatSource: null,
+                finisher: null
+            };
+
+            const resultElements = {
+                mainProtein: document.getElementById('mainProtein-result'),
+                cuts: document.getElementById('cuts-result'),
+                fatSource: document.getElementById('fatSource-result'),
+                finisher: document.getElementById('finisher-result'),
+                summary: document.getElementById('summary-result')
+            };
+            
+            const placeholderElements = {
+                mainProtein: '<span class="dice-placeholder">🥩</span>',
+                cuts: '<span class="dice-placeholder">🔪</span>',
+                fatSource: '<span class="dice-placeholder">🧈</span>',
+                finisher: '<span class="dice-placeholder">🍳</span>',
+            }
+
+            const rollAllBtn = document.getElementById('roll-all-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const individualRollBtns = document.querySelectorAll('.roll-btn');
+
+            function getRandomElement(arr) {
+                if (!arr || arr.length === 0) return "N/A";
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+
+            function rollCategory(categoryName) {
+                let result = "";
+                let dataList;
+
+                if (categoryName === 'cuts') {
+                    if (!currentMeal.mainProtein) {
+                        rollCategory('mainProtein'); 
+                    }
+                    dataList = mealData.cuts[currentMeal.mainProtein];
+                } else {
+                    dataList = mealData[categoryName];
+                }
+                
+                result = getRandomElement(dataList);
+                currentMeal[categoryName] = result;
+                resultElements[categoryName].textContent = result;
+                
+                animateRoll(resultElements[categoryName]);
+            }
+            
+            function animateRoll(element) {
+                element.classList.add('opacity-0', 'transform', '-translate-y-2');
+                setTimeout(() => {
+                    element.classList.remove('opacity-0', 'transform', '-translate-y-2');
+                    element.classList.add('transition-all', 'duration-300');
+                }, 50);
+            }
+
+            function rollAll() {
+                rollCategory('mainProtein');
+                rollCategory('cuts');
+                rollCategory('fatSource');
+                rollCategory('finisher');
+                updateSummary();
+            }
+
+            function updateSummary() {
+                const { mainProtein, cuts, fatSource, finisher } = currentMeal;
+                if (mainProtein && cuts && fatSource && finisher) {
+                    resultElements.summary.innerHTML = `You're having <strong class="text-green-800">${cuts}</strong> (from ${mainProtein}) cooked with <strong class="text-green-800">${fatSource}</strong> and finished with <strong class="text-green-800">${finisher}</strong>. Enjoy!`;
+                } else {
+                     resultElements.summary.innerHTML = '<p class="text-stone-500">Roll all categories to see your meal!</p>';
+                }
+            }
+            
+            function resetAll() {
+                currentMeal = {
+                    mainProtein: null,
+                    cuts: null,
+                    fatSource: null,
+                    finisher: null
+                };
+                
+                for (const category in resultElements) {
+                    if (category !== 'summary' && resultElements[category]) {
+                         resultElements[category].innerHTML = placeholderElements[category];
+                    }
+                }
+                
+                resultElements.summary.innerHTML = '<p class="text-stone-500">Roll the dice to see your meal!</p>';
+            }
+
+            rollAllBtn.addEventListener('click', rollAll);
+            resetBtn.addEventListener('click', resetAll);
+
+            individualRollBtns.forEach(button => {
+                button.addEventListener('click', () => {
+                    const category = button.getAttribute('data-category');
+                    rollCategory(category);
+                    if (category === 'mainProtein') {
+                        currentMeal.cuts = null;
+                        resultElements.cuts.innerHTML = placeholderElements.cuts;
+                    }
+                    updateSummary();
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
