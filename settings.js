@@ -1,11 +1,49 @@
-document.addEventListener('DOMContentLoaded', () => {
-    let mealData = getMealData();
+document.addEventListener('DOMContentLoaded', async () => {
+    let mealData = await getMealData();
     const settingsContainer = document.getElementById('settings-container');
+    const categorySettingsContainer = document.getElementById('category-settings-container');
     const saveBtn = document.getElementById('save-settings-btn');
     const addItemBtn = document.getElementById('add-item-btn');
     const newItemNameInput = document.getElementById('new-item-name');
     const newItemWeightInput = document.getElementById('new-item-weight');
     const newItemCategorySelect = document.getElementById('new-item-category');
+
+    function renderCategorySettings() {
+        categorySettingsContainer.innerHTML = '';
+        const categorySettings = getCategorySettings();
+
+        mealData.mainProtein.forEach(protein => {
+            const label = document.createElement('label');
+            label.className = 'flex items-center space-x-2 p-2 rounded-lg hover:bg-stone-200 transition-colors';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded';
+            checkbox.dataset.categoryName = protein.name;
+            checkbox.checked = categorySettings[protein.name] !== undefined ? categorySettings[protein.name] : protein.enabledByDefault;
+
+            const span = document.createElement('span');
+            span.textContent = protein.name;
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            categorySettingsContainer.appendChild(label);
+        });
+    }
+
+    function getCategorySettings() {
+        const storedSettings = localStorage.getItem('categorySettings');
+        return storedSettings ? JSON.parse(storedSettings) : {};
+    }
+
+    function saveCategorySettings() {
+        const checkboxes = categorySettingsContainer.querySelectorAll('input[type="checkbox"]');
+        const newSettings = {};
+        checkboxes.forEach(checkbox => {
+            newSettings[checkbox.dataset.categoryName] = checkbox.checked;
+        });
+        localStorage.setItem('categorySettings', JSON.stringify(newSettings));
+    }
 
     function renderSettings() {
         settingsContainer.innerHTML = '';
@@ -108,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveSettings() {
+        saveCategorySettings();
         const itemRows = document.querySelectorAll('[data-item-row]');
 
         itemRows.forEach(row => {
@@ -166,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     saveBtn.addEventListener('click', saveSettings);
     addItemBtn.addEventListener('click', addNewItem);
 
+    renderCategorySettings();
     populateCategorySelect();
     renderSettings();
 });
