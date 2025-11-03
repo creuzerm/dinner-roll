@@ -1,0 +1,97 @@
+{
+    "mainProtein": [
+        { "name": "Beef", "weight": 10, "inStock": true, "enabledByDefault": true },
+        { "name": "Lamb", "weight": 8, "inStock": true, "enabledByDefault": false },
+        { "name": "Chicken", "weight": 9, "inStock": true, "enabledByDefault": true },
+        { "name": "Turkey", "weight": 6, "inStock": true, "enabledByDefault": true },
+        { "name": "Duck", "weight": 5, "inStock": true, "enabledByDefault": true },
+        { "name": "Fish", "weight": 7, "inStock": true, "enabledByDefault": true },
+        { "name": "Seafood", "weight": 7, "inStock": true, "enabledByDefault": false },
+        { "name": "Pork", "weight": 8, "inStock": true, "enabledByDefault": false },
+        { "name": "Wild Game", "weight": 5, "inStock": true, "enabledByDefault": false }
+    ],
+    "cuts": {
+        "Beef": [
+            { "name": "Ribeye Steak", "weight": 10, "inStock": true },
+            { "name": "New York Strip", "weight": 9, "inStock": true },
+            { "name": "Sirloin Steak", "weight": 8, "inStock": true },
+            { "name": "Ground Beef (Patties)", "weight": 10, "inStock": true },
+            { "name": "Chuck Roast", "weight": 7, "inStock": true },
+            { "name": "Brisket", "weight": 6, "inStock": true },
+            { "name": "Short Ribs", "weight": 7, "inStock": true },
+            { "name": "Beef Liver", "weight": 4, "inStock": true }
+        ],
+        "Pork": [
+            { "name": "Bacon", "weight": 10, "inStock": true },
+            { "name": "Pork Chops", "weight": 9, "inStock": true },
+            { "name": "Pork Belly", "weight": 9, "inStock": true },
+            { "name": "Ground Pork", "weight": 8, "inStock": true }
+        ],
+        "Lamb": [
+            { "name": "Lamb Chops", "weight": 10, "inStock": true },
+            { "name": "Leg of Lamb", "weight": 8, "inStock": true },
+            { "name": "Ground Lamb", "weight": 9, "inStock": true },
+            { "name": "Lamb Shank", "weight": 7, "inStock": true },
+            { "name": "Lamb Liver", "weight": 4, "inStock": true }
+        ],
+        "Chicken": [
+            { "name": "Chicken Thighs (Skin-on)", "weight": 10, "inStock": true },
+            { "name": "Chicken Wings", "weight": 9, "inStock": true },
+            { "name": "Whole Roasted Chicken", "weight": 8, "inStock": true },
+            { "name": "Chicken Breast", "weight": 7, "inStock": true },
+            { "name": "Chicken Liver", "weight": 4, "inStock": true },
+            { "name": "Chicken Breakfast Sausages", "weight": 8, "inStock": true }
+        ],
+        "Turkey": [
+            { "name": "Turkey Legs", "weight": 9, "inStock": true },
+            { "name": "Ground Turkey", "weight": 8, "inStock": true },
+            { "name": "Turkey Breast (Skin-on)", "weight": 7, "inStock": true },
+            { "name": "Whole Roast Turkey", "weight": 8, "inStock": true },
+            { "name": "Turkey Cold Cuts", "weight": 6, "inStock": true },
+            { "name": "Turkey Breakfast Sausages", "weight": 8, "inStock": true }
+        ],
+        "Duck": [
+            { "name": "Duck Breast (Skin-on)", "weight": 10, "inStock": true },
+            { "name": "Duck Legs (Confit)", "weight": 8, "inStock": true },
+            { "name": "Whole Roasted Duck", "weight": 7, "inStock": true }
+        ],
+        "Fish": [
+            { "name": "Salmon Fillet (Skin-on)", "weight": 10, "inStock": true },
+            { "name": "Sardines (in water/oil)", "weight": 8, "inStock": true },
+            { "name": "Mackerel", "weight": 7, "inStock": true },
+            { "name": "Cod", "weight": 6, "inStock": true },
+            { "name": "Tuna Steak", "weight": 8, "inStock": true },
+            { "name": "Halibut", "weight": 7, "inStock": true }
+        ],
+        "Seafood": [
+            { "name": "Shrimp", "weight": 9, "inStock": true },
+            { "name": "Scallops", "weight": 8, "inStock": true },
+            { "name": "Mussels", "weight": 6, "inStock": true },
+            { "name": "Crab Legs", "weight": 7, "inStock": true },
+            { "name": "Oysters", "weight": 5, "inStock": true }
+        ],
+        "Wild Game": [
+            { "name": "Venison Steak", "weight": 9, "inStock": true },
+            { "name": "Ground Venison", "weight": 8, "inStock": true },
+            { "name": "Bison Steak", "weight": 8, "inStock": true },
+            { "name": "Elk Steak", "weight": 7, "inStock": true }
+        ]
+    },
+    "fatSource": [
+        { "name": "Beef Tallow", "weight": 10, "inStock": true },
+        { "name": "Salted Butter", "weight": 10, "inStock": true },
+        { "name": "Ghee", "weight": 8, "inStock": true },
+        { "name": "Duck Fat", "weight": 7, "inStock": true },
+        { "name": "Schmaltz (Chicken Fat)", "weight": 6, "inStock": true },
+        { "name": "Egg Yolks", "weight": 9, "inStock": true }
+    ],
+    "finisher": [
+        { "name": "Just Salt", "weight": 10, "inStock": true },
+        { "name": "Fried Egg(s)", "weight": 9, "inStock": true },
+        { "name": "Melted Butter", "weight": 8, "inStock": true },
+        { "name": "Crumbled Hard Cheese", "weight": 7, "inStock": true },
+        { "name": "Beef Bacon Bits", "weight": 8, "inStock": true },
+        { "name": "A Dollop of Sour Cream", "weight": 6, "inStock": true },
+        { "name": "Bone Broth (on the side)", "weight": 7, "inStock": true }
+    ]
+}
