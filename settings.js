@@ -2,11 +2,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     let mealData = await getMealData();
     const settingsContainer = document.getElementById('settings-container');
     const categorySettingsContainer = document.getElementById('category-settings-container');
+    const cuisineSettingsContainer = document.getElementById('cuisine-settings-container');
     const saveBtn = document.getElementById('save-settings-btn');
     const addItemBtn = document.getElementById('add-item-btn');
     const newItemNameInput = document.getElementById('new-item-name');
     const newItemWeightInput = document.getElementById('new-item-weight');
     const newItemCategorySelect = document.getElementById('new-item-category');
+
+    const allCuisines = ["American", "French", "Italian", "Mediterranean", "Chinese", "Japanese", "Indian", "Mexican"];
+    const defaultCuisineSettings = {
+        "American": true,
+        "French": false,
+        "Italian": true,
+        "Mediterranean": false,
+        "Chinese": true,
+        "Japanese": false,
+        "Indian": false,
+        "Mexican": true,
+    };
 
     function renderCategorySettings() {
         categorySettingsContainer.innerHTML = '';
@@ -31,9 +44,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function renderCuisineSettings() {
+        cuisineSettingsContainer.innerHTML = '';
+        const cuisineSettings = getCuisineSettings();
+
+        allCuisines.forEach(cuisine => {
+            const label = document.createElement('label');
+            label.className = 'flex items-center space-x-2 p-2 rounded-lg hover:bg-stone-200 transition-colors';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded';
+            checkbox.dataset.cuisineName = cuisine;
+            checkbox.checked = cuisineSettings[cuisine] !== undefined ? cuisineSettings[cuisine] : defaultCuisineSettings[cuisine];
+
+            const span = document.createElement('span');
+            span.textContent = cuisine;
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            cuisineSettingsContainer.appendChild(label);
+        });
+    }
+
     function getCategorySettings() {
         const storedSettings = localStorage.getItem('categorySettings');
         return storedSettings ? JSON.parse(storedSettings) : {};
+    }
+
+    function getCuisineSettings() {
+        const storedSettings = localStorage.getItem('cuisineSettings');
+        if (storedSettings) {
+            return JSON.parse(storedSettings);
+        }
+        return defaultCuisineSettings;
     }
 
     function saveCategorySettings() {
@@ -43,6 +87,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             newSettings[checkbox.dataset.categoryName] = checkbox.checked;
         });
         localStorage.setItem('categorySettings', JSON.stringify(newSettings));
+    }
+
+    function saveCuisineSettings() {
+        const checkboxes = cuisineSettingsContainer.querySelectorAll('input[type="checkbox"]');
+        const newSettings = {};
+        checkboxes.forEach(checkbox => {
+            newSettings[checkbox.dataset.cuisineName] = checkbox.checked;
+        });
+        localStorage.setItem('cuisineSettings', JSON.stringify(newSettings));
     }
 
     function renderSettings() {
@@ -147,6 +200,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function saveSettings() {
         saveCategorySettings();
+        saveCuisineSettings();
         const itemRows = document.querySelectorAll('[data-item-row]');
 
         itemRows.forEach(row => {
@@ -161,10 +215,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 inStock: inStockCheckbox.checked
             };
 
+            let originalItem;
             if (subCategory) {
-                mealData[category][subCategory][index] = updatedItem;
+                originalItem = mealData[category][subCategory][index];
             } else {
-                mealData[category][index] = updatedItem;
+                originalItem = mealData[category][index];
+            }
+
+            const finalItem = { ...originalItem, ...updatedItem };
+
+            if (subCategory) {
+                mealData[category][subCategory][index] = finalItem;
+            } else {
+                mealData[category][index] = finalItem;
             }
         });
 
@@ -206,6 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     addItemBtn.addEventListener('click', addNewItem);
 
     renderCategorySettings();
+    renderCuisineSettings();
     populateCategorySelect();
     renderSettings();
 });

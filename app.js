@@ -29,17 +29,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     const individualRollBtns = document.querySelectorAll('.roll-btn');
     const inStockToggle = document.getElementById('in-stock-toggle');
 
+    const defaultCuisineSettings = {
+        "American": true,
+        "French": false,
+        "Italian": true,
+        "Mediterranean": false,
+        "Chinese": true,
+        "Japanese": false,
+        "Indian": false,
+        "Mexican": true,
+    };
+
     function getCategorySettings() {
         const storedSettings = localStorage.getItem('categorySettings');
         return storedSettings ? JSON.parse(storedSettings) : {};
     }
 
+    function getCuisineSettings() {
+        const storedSettings = localStorage.getItem('cuisineSettings');
+        if (storedSettings) {
+            return JSON.parse(storedSettings);
+        }
+        return defaultCuisineSettings;
+    }
+
     function getEnabledMainProteins() {
         const categorySettings = getCategorySettings();
+        const cuisineSettings = getCuisineSettings();
+
+        const enabledCuisines = Object.keys(cuisineSettings).filter(cuisine => cuisineSettings[cuisine]);
+
         return mealData.mainProtein.filter(protein => {
-            return categorySettings[protein.name] !== undefined ? categorySettings[protein.name] : protein.enabledByDefault;
+            const isCategoryEnabled = categorySettings[protein.name] !== undefined ? categorySettings[protein.name] : protein.enabledByDefault;
+            if (!isCategoryEnabled) {
+                return false;
+            }
+
+            if (enabledCuisines.length > 0) {
+                return protein.cuisine && protein.cuisine.some(cuisine => enabledCuisines.includes(cuisine));
+            }
+
+            return true;
         });
     }
+
 
     function loadSettings() {
         const savedFilterInStock = localStorage.getItem('filterInStock');
@@ -79,14 +112,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (categoryName === 'mainProtein') {
             dataList = getEnabledMainProteins();
             if (dataList.length === 0) {
-                result = "No categories enabled!";
+                result = "No proteins match!";
             } else {
                 result = getRandomElement(dataList);
             }
         } else if (categoryName === 'cuts') {
-            if (!currentMeal.mainProtein || currentMeal.mainProtein === "No categories enabled!") {
+            if (!currentMeal.mainProtein || currentMeal.mainProtein === "No proteins match!" || currentMeal.mainProtein === "No categories enabled!") {
                 rollCategory('mainProtein');
-                if (currentMeal.mainProtein === "No categories enabled!") {
+                 if (currentMeal.mainProtein === "No proteins match!" || currentMeal.mainProtein === "No categories enabled!") {
                     result = "N/A";
                     currentMeal.cuts = result;
                     resultElements.cuts.textContent = result;
@@ -125,8 +158,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     function updateSummary() {
         const { mainProtein, cuts, fatSource, finisher } = currentMeal;
         if (mainProtein && cuts && fatSource && finisher) {
-             if (mainProtein === "No categories enabled!") {
-                resultElements.summary.innerHTML = '<p class="text-stone-500">Please enable some meal categories in the settings!</p>';
+             if (mainProtein === "No proteins match!" || mainProtein === "No categories enabled!") {
+                resultElements.summary.innerHTML = `<p class="text-stone-500">Please check your category and cuisine settings!</p>`;
              } else {
                 resultElements.summary.innerHTML = `You're having <strong class="text-green-800">${cuts}</strong> (from ${mainProtein}) cooked with <strong class="text-green-800">${fatSource}</strong> and finished with <strong class="text-green-800">${finisher}</strong>. Enjoy!`;
              }

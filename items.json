@@ -1,14 +1,14 @@
 {
     "mainProtein": [
-        { "name": "Beef", "weight": 10, "inStock": true, "enabledByDefault": true },
-        { "name": "Lamb", "weight": 8, "inStock": true, "enabledByDefault": false },
-        { "name": "Chicken", "weight": 9, "inStock": true, "enabledByDefault": true },
-        { "name": "Turkey", "weight": 6, "inStock": true, "enabledByDefault": true },
-        { "name": "Duck", "weight": 5, "inStock": true, "enabledByDefault": true },
-        { "name": "Fish", "weight": 7, "inStock": true, "enabledByDefault": true },
-        { "name": "Seafood", "weight": 7, "inStock": true, "enabledByDefault": false },
-        { "name": "Pork", "weight": 8, "inStock": true, "enabledByDefault": false },
-        { "name": "Wild Game", "weight": 5, "inStock": true, "enabledByDefault": false }
+        { "name": "Beef", "weight": 10, "inStock": true, "enabledByDefault": true, "cuisine": ["American", "French", "Italian", "Mexican", "Chinese", "Japanese"] },
+        { "name": "Lamb", "weight": 8, "inStock": true, "enabledByDefault": false, "cuisine": ["Mediterranean", "French", "Indian"] },
+        { "name": "Chicken", "weight": 9, "inStock": true, "enabledByDefault": true, "cuisine": ["American", "French", "Italian", "Mediterranean", "Chinese", "Japanese", "Indian", "Mexican"] },
+        { "name": "Turkey", "weight": 6, "inStock": true, "enabledByDefault": true, "cuisine": ["American"] },
+        { "name": "Duck", "weight": 5, "inStock": true, "enabledByDefault": true, "cuisine": ["French", "Chinese"] },
+        { "name": "Fish", "weight": 7, "inStock": true, "enabledByDefault": true, "cuisine": ["Japanese", "Mediterranean", "American", "Italian"] },
+        { "name": "Seafood", "weight": 7, "inStock": true, "enabledByDefault": false, "cuisine": ["Japanese", "Mediterranean", "French", "Italian", "American"] },
+        { "name": "Pork", "weight": 8, "inStock": true, "enabledByDefault": false, "cuisine": ["American", "Chinese", "Mexican", "Italian"] },
+        { "name": "Wild Game", "weight": 5, "inStock": true, "enabledByDefault": false, "cuisine": ["American", "French"] }
     ],
     "cuts": {
         "Beef": [
