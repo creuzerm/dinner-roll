@@ -18,7 +18,7 @@
             🎲 Roll For Your Meal! 🎲
         </button>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
             
             <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between transition-all duration-300">
                 <div>
@@ -58,6 +58,23 @@
                     </div>
                 </div>
                 <button data-category="finisher" class="roll-btn w-full bg-red-800 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-colors mt-4">Roll</button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between transition-all duration-300">
+                <div>
+                    <h2 class="text-xl font-semibold text-stone-800 mb-4 text-center">5. Cuisine Style (Optional)</h2>
+                    <div id="cuisine-result" class="text-2xl font-bold text-red-800 h-24 flex items-center justify-center text-center p-2">
+                         <span class="dice-placeholder">🌍</span>
+                    </div>
+                </div>
+                <div class="flex space-x-2 mt-4">
+                    <button data-category="cuisine" class="roll-btn w-full bg-red-800 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-colors">Roll</button>
+                    <button id="remove-cuisine-btn" class="w-auto bg-stone-400 text-white font-bold py-2 px-3 rounded-lg shadow-md hover:bg-stone-500 focus:outline-none focus:ring-4 focus:ring-stone-300 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 

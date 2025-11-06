@@ -2,11 +2,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     let mealData = await getMealData();
     const settingsContainer = document.getElementById('settings-container');
     const categorySettingsContainer = document.getElementById('category-settings-container');
+    const cuisineSettingsContainer = document.getElementById('cuisine-settings-container');
     const saveBtn = document.getElementById('save-settings-btn');
     const addItemBtn = document.getElementById('add-item-btn');
     const newItemNameInput = document.getElementById('new-item-name');
     const newItemWeightInput = document.getElementById('new-item-weight');
     const newItemCategorySelect = document.getElementById('new-item-category');
+    const addCuisineBtn = document.getElementById('add-cuisine-btn');
+    const newCuisineNameInput = document.getElementById('new-cuisine-name');
+    const newCuisineProteinAssociationsContainer = document.getElementById('new-cuisine-protein-associations');
+
+    const defaultCuisines = ["American", "French", "Italian", "Mediterranean", "Chinese", "Japanese", "Indian", "Mexican"];
+    const defaultCuisineSettings = {
+        "American": true,
+        "French": false,
+        "Italian": true,
+        "Mediterranean": false,
+        "Chinese": true,
+        "Japanese": false,
+        "Indian": false,
+        "Mexican": true,
+    };
+
+    function getCuisineList() {
+        const storedCuisines = localStorage.getItem('cuisineList');
+        return storedCuisines ? JSON.parse(storedCuisines) : defaultCuisines;
+    }
+
+    function saveCuisineList(cuisines) {
+        localStorage.setItem('cuisineList', JSON.stringify(cuisines));
+    }
 
     function renderCategorySettings() {
         categorySettingsContainer.innerHTML = '';
@@ -31,9 +56,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    function renderCuisineSettings() {
+        cuisineSettingsContainer.innerHTML = '';
+        const cuisineSettings = getCuisineSettings();
+        const allCuisines = getCuisineList();
+
+        allCuisines.forEach(cuisine => {
+            const label = document.createElement('label');
+            label.className = 'flex items-center space-x-2 p-2 rounded-lg hover:bg-stone-200 transition-colors';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded';
+            checkbox.dataset.cuisineName = cuisine;
+            checkbox.checked = cuisineSettings[cuisine] !== undefined ? cuisineSettings[cuisine] : defaultCuisineSettings[cuisine];
+
+            const span = document.createElement('span');
+            span.textContent = cuisine;
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            cuisineSettingsContainer.appendChild(label);
+        });
+    }
+
+    function renderProteinAssociationCheckboxes() {
+        newCuisineProteinAssociationsContainer.innerHTML = '';
+        mealData.mainProtein.forEach(protein => {
+            const label = document.createElement('label');
+            label.className = 'flex items-center space-x-2 p-2 rounded-lg hover:bg-stone-200 transition-colors';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'h-5 w-5 text-green-600 focus:ring-green-500 border-gray-300 rounded';
+            checkbox.dataset.proteinName = protein.name;
+
+            const span = document.createElement('span');
+            span.textContent = protein.name;
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            newCuisineProteinAssociationsContainer.appendChild(label);
+        });
+    }
+
     function getCategorySettings() {
         const storedSettings = localStorage.getItem('categorySettings');
         return storedSettings ? JSON.parse(storedSettings) : {};
+    }
+
+    function getCuisineSettings() {
+        const storedSettings = localStorage.getItem('cuisineSettings');
+        if (storedSettings) {
+            return JSON.parse(storedSettings);
+        }
+        return defaultCuisineSettings;
     }
 
     function saveCategorySettings() {
@@ -43,6 +120,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             newSettings[checkbox.dataset.categoryName] = checkbox.checked;
         });
         localStorage.setItem('categorySettings', JSON.stringify(newSettings));
+    }
+
+    function saveCuisineSettings() {
+        const checkboxes = cuisineSettingsContainer.querySelectorAll('input[type="checkbox"]');
+        const newSettings = {};
+        checkboxes.forEach(checkbox => {
+            newSettings[checkbox.dataset.cuisineName] = checkbox.checked;
+        });
+        localStorage.setItem('cuisineSettings', JSON.stringify(newSettings));
     }
 
     function renderSettings() {
@@ -147,6 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function saveSettings() {
         saveCategorySettings();
+        saveCuisineSettings();
         const itemRows = document.querySelectorAll('[data-item-row]');
 
         itemRows.forEach(row => {
@@ -161,10 +248,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 inStock: inStockCheckbox.checked
             };
 
+            let originalItem;
             if (subCategory) {
-                mealData[category][subCategory][index] = updatedItem;
+                originalItem = mealData[category][subCategory][index];
             } else {
-                mealData[category][index] = updatedItem;
+                originalItem = mealData[category][index];
+            }
+
+            const finalItem = { ...originalItem, ...updatedItem };
+
+            if (subCategory) {
+                mealData[category][subCategory][index] = finalItem;
+            } else {
+                mealData[category][index] = finalItem;
             }
         });
 
@@ -202,10 +298,57 @@ document.addEventListener('DOMContentLoaded', async () => {
         newItemWeightInput.value = '10';
     }
 
+    function addNewCuisine() {
+        const name = newCuisineNameInput.value.trim();
+        if (!name) {
+            alert('Please enter a name for the new cuisine.');
+            return;
+        }
+
+        const allCuisines = getCuisineList();
+        if (allCuisines.some(c => c.toLowerCase() === name.toLowerCase())) {
+            alert('This cuisine already exists.');
+            return;
+        }
+
+        const selectedProteins = Array.from(newCuisineProteinAssociationsContainer.querySelectorAll('input[type="checkbox"]:checked'))
+            .map(cb => cb.dataset.proteinName);
+
+        if (selectedProteins.length === 0) {
+            alert('Please associate the new cuisine with at least one protein.');
+            return;
+        }
+
+        allCuisines.push(name);
+        saveCuisineList(allCuisines);
+
+        const cuisineSettings = getCuisineSettings();
+        cuisineSettings[name] = true;
+        localStorage.setItem('cuisineSettings', JSON.stringify(cuisineSettings));
+
+        mealData.mainProtein.forEach(protein => {
+            if (selectedProteins.includes(protein.name)) {
+                if (!protein.cuisine) {
+                    protein.cuisine = [];
+                }
+                protein.cuisine.push(name);
+            }
+        });
+
+        saveMealData(mealData);
+        renderCuisineSettings();
+        renderProteinAssociationCheckboxes();
+        newCuisineNameInput.value = '';
+    }
+
+
     saveBtn.addEventListener('click', saveSettings);
     addItemBtn.addEventListener('click', addNewItem);
+    addCuisineBtn.addEventListener('click', addNewCuisine);
 
     renderCategorySettings();
+    renderCuisineSettings();
+    renderProteinAssociationCheckboxes();
     populateCategorySelect();
     renderSettings();
 });
