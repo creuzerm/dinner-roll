@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         mainProtein: null,
         cuts: null,
         fatSource: null,
-        finisher: null
+        finisher: null,
+        cuisine: null
     };
 
     const resultElements = {
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         cuts: document.getElementById('cuts-result'),
         fatSource: document.getElementById('fatSource-result'),
         finisher: document.getElementById('finisher-result'),
+        cuisine: document.getElementById('cuisine-result'),
         summary: document.getElementById('summary-result')
     };
 
@@ -22,12 +24,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         cuts: '<span class="dice-placeholder">🔪</span>',
         fatSource: '<span class="dice-placeholder">🧈</span>',
         finisher: '<span class="dice-placeholder">🍳</span>',
+        cuisine: '<span class="dice-placeholder">🌍</span>',
     }
 
     const rollAllBtn = document.getElementById('roll-all-btn');
     const resetBtn = document.getElementById('reset-btn');
     const individualRollBtns = document.querySelectorAll('.roll-btn');
     const inStockToggle = document.getElementById('in-stock-toggle');
+    const removeCuisineBtn = document.getElementById('remove-cuisine-btn');
 
     const defaultCuisineSettings = {
         "American": true,
@@ -105,6 +109,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return filteredArr[filteredArr.length - 1].name;
     }
 
+     function getRandomCuisine(proteinName) {
+        const protein = mealData.mainProtein.find(p => p.name === proteinName);
+        if (!protein || !protein.cuisine || protein.cuisine.length === 0) {
+            return "N/A";
+        }
+        const randomIndex = Math.floor(Math.random() * protein.cuisine.length);
+        return protein.cuisine[randomIndex];
+    }
+
     function rollCategory(categoryName) {
         let result = "";
         let dataList;
@@ -129,6 +142,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             dataList = mealData.cuts[currentMeal.mainProtein];
             result = getRandomElement(dataList);
+        } else if (categoryName === 'cuisine') {
+            if (!currentMeal.mainProtein || currentMeal.mainProtein === "No proteins match!" || currentMeal.mainProtein === "No categories enabled!") {
+                rollCategory('mainProtein');
+                if (currentMeal.mainProtein === "No proteins match!" || currentMeal.mainProtein === "No categories enabled!") {
+                    result = "N/A";
+                } else {
+                    result = getRandomCuisine(currentMeal.mainProtein);
+                }
+            } else {
+                 result = getRandomCuisine(currentMeal.mainProtein);
+            }
         } else {
             dataList = mealData[categoryName];
             result = getRandomElement(dataList);
@@ -152,16 +176,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         rollCategory('cuts');
         rollCategory('fatSource');
         rollCategory('finisher');
+        rollCategory('cuisine');
         updateSummary();
     }
 
     function updateSummary() {
-        const { mainProtein, cuts, fatSource, finisher } = currentMeal;
+        const { mainProtein, cuts, fatSource, finisher, cuisine } = currentMeal;
         if (mainProtein && cuts && fatSource && finisher) {
              if (mainProtein === "No proteins match!" || mainProtein === "No categories enabled!") {
                 resultElements.summary.innerHTML = `<p class="text-stone-500">Please check your category and cuisine settings!</p>`;
              } else {
-                resultElements.summary.innerHTML = `You're having <strong class="text-green-800">${cuts}</strong> (from ${mainProtein}) cooked with <strong class="text-green-800">${fatSource}</strong> and finished with <strong class="text-green-800">${finisher}</strong>. Enjoy!`;
+                let summaryText = `You're having <strong class="text-green-800">${cuts}</strong> (from ${mainProtein}) cooked with <strong class="text-green-800">${fatSource}</strong> and finished with <strong class="text-green-800">${finisher}</strong>`;
+                if (cuisine && cuisine !== "N/A") {
+                    summaryText += `, in a <strong class="text-blue-800">${cuisine}</strong> style`;
+                }
+                summaryText += ". Enjoy!";
+                resultElements.summary.innerHTML = summaryText;
              }
         } else {
              resultElements.summary.innerHTML = '<p class="text-stone-500">Roll all categories to see your meal!</p>';
@@ -173,7 +203,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             mainProtein: null,
             cuts: null,
             fatSource: null,
-            finisher: null
+            finisher: null,
+            cuisine: null
         };
 
         for (const category in resultElements) {
@@ -195,9 +226,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (category === 'mainProtein') {
                 currentMeal.cuts = null;
                 resultElements.cuts.innerHTML = placeholderElements.cuts;
+                currentMeal.cuisine = null;
+                resultElements.cuisine.innerHTML = placeholderElements.cuisine;
             }
             updateSummary();
         });
+    });
+
+    removeCuisineBtn.addEventListener('click', () => {
+        currentMeal.cuisine = null;
+        resultElements.cuisine.innerHTML = placeholderElements.cuisine;
+        updateSummary();
     });
 
     inStockToggle.addEventListener('change', () => {
