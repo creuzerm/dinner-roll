@@ -33,17 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const inStockToggle = document.getElementById('in-stock-toggle');
     const removeCuisineBtn = document.getElementById('remove-cuisine-btn');
 
-    const defaultCuisineSettings = {
-        "American": true,
-        "French": false,
-        "Italian": true,
-        "Mediterranean": false,
-        "Chinese": true,
-        "Japanese": false,
-        "Indian": false,
-        "Mexican": true,
-    };
-
     function getCategorySettings() {
         const storedSettings = localStorage.getItem('categorySettings');
         return storedSettings ? JSON.parse(storedSettings) : {};
@@ -51,10 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function getCuisineSettings() {
         const storedSettings = localStorage.getItem('cuisineSettings');
-        if (storedSettings) {
-            return JSON.parse(storedSettings);
-        }
-        return defaultCuisineSettings;
+        return storedSettings ? JSON.parse(storedSettings) : {};
     }
 
     function getEnabledMainProteins() {
